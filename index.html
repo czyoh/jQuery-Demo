@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQ实现拖拽添加效果</title>
+    <style>
+        body {
+            -webkit-user-select: none;
+        }
+        
+        #container {
+            margin: 0 auto;
+            width: 500px;
+            height: 500px;
+            border: 1px solid;
+            position: relative;
+        }
+
+        #container li {
+            width: 100px;
+            height: 100px;
+            display: block;
+        }
+
+        #con {
+            float: left;
+        }
+        
+        li {
+            list-style: none;
+            width: 100px;
+            height: 100px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <ul id="con">
+        <li class="pro aa" style="background-color: #f00;"></li>
+        <li class="pro aa" style="background-color: #d4d4d4;"></li>
+        <li class="pro cc" style="background-color: #0f0;"></li>
+        <li class="pro aa" style="background-color: #0ff;"></li>
+        <li class="pro cc" style="background-color: #00f;"></li>
+        <li class="pro cc" style="background-color: #ff0;"></li>
+    </ul>
+    <div id="container">
+        
+    </div>
+    <script type="text/javascript" src='jquery-3.2.1.js'></script>
+    <script type="text/javascript">
+        $(function() {
+            // 定义克隆变量
+            var Clone = null;
+            $("#con li.pro").bind("mousedown", function(e) {
+                var evt = e || window.event;
+                // 创建拖拽虚影
+                Clone = $(this).clone(true);
+                Clone.css({
+                    'position' : 'absolute',
+                    'left' : evt.clientX - 50,
+                    'top' : evt.clientY - 50,
+                    'opacity' : .5
+                });
+                // 临时添加到 body
+                $("body").prepend(Clone);
+                // 绑定 mousemove 事件
+                $("body").bind("mousemove", function(evt) {
+                    Clone.css({
+                    'left' : evt.clientX - 50,
+                    'top' : evt.clientY - 50
+                    });
+                    console.log('mousemove');
+                });
+                $(document).one("mouseup", function(evt) {
+                    // 判断鼠标位置是否处于 container 区域内
+                    if(
+                        evt.clientX >= ($("#container").offset().left + 50) && 
+                        evt.clientX <= ($("#container").offset().left + $("#container").width() - 50) &&
+                        evt.clientY >= ($("#container").offset().top + 50) &&
+                        evt.clientY <= ($("#container").offset().top + $("#container").height() - 50)
+                        )
+                    {
+                        // 克隆拖拽虚影并赋值给临时变量
+                        let temp = $("body").find(Clone).clone(true);
+                        temp.css({
+                            'left' : evt.clientX - $("#container").offset().left - 50,
+                            'top' : evt.clientY - $("#container").offset().top - 50,
+                            'opacity' : 1
+                        });
+                        // 插入 container 区域
+                        $("#container").append(temp);
+                    }
+                    // 删除临时插入到 body 的克隆节点
+                    $("body").find(Clone).remove();
+                    // 解除 mousemove 事件监听
+                    $("body").unbind('mousemove');
+                });
+            })
+        })
+    </script>
+    
+</body>
+</html>
