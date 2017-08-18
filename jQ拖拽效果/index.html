@@ -87,10 +87,12 @@
                             'top' : evt.clientY - $("#container").offset().top - 50,
                             'opacity' : 1
                         });
+                        temp.unbind('mousedown');
                         // 插入 container 区域
                         $("#container").append(temp);
                     }
                     // 删除临时插入到 body 的克隆节点
+                    console.log($("body").find(Clone));
                     $("body").find(Clone).remove();
                     // 解除 mousemove 事件监听
                     $("body").unbind('mousemove');
@@ -99,5 +101,6 @@
         })
     </script>
     
+
 </body>
 </html>
